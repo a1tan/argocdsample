@@ -32,6 +32,6 @@ jobs:
           helm repo add redis-ha https://dandydeveloper.github.io/charts/
           
       - name: Argo CD Install
-        working-directory: argocd/argocd-install
+        working-directory: argocd-install
         run: |
           helm install argocd ./argo-cd --namespace=argocd --create-namespace -f values-override.yaml
