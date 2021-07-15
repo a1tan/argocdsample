@@ -1,0 +1,37 @@
+name: Release ArgoCd
+
+on:
+  push:
+#    branches:
+#      - main
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          
+      - uses: azure/k8s-set-context@v1
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ AKS_CONFIG }} # Use secret (https://developer.github.com/actions/managing-workflows/storing-secrets/)
+          #context: <context name>  #If left unspecified, current-context from kubeconfig is used as default
+        id: setcontext
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.4.0
+          
+      - name: Helm Repo Add
+        run: |
+          helm repo add redis-ha https://dandydeveloper.github.io/charts/
+          
+      - name: Argo CD Install
+        working-directory: argocd/argocd-install
+        run: |
+          helm install argocd ./argo-cd --namespace=argocd --create-namespace -f values-override.yaml
