@@ -23,6 +23,10 @@ jobs:
         uses: azure/setup-helm@v1
         with:
           version: v3.4.0
+          
+      - name: Helm Repo Add
+        run: |
+          helm repo add redis-ha https://dandydeveloper.github.io/charts/
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.2.1
